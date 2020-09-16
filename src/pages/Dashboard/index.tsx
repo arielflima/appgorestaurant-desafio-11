@@ -32,6 +32,7 @@ interface Food {
   id: number;
   name: string;
   description: string;
+  category: number;
   price: number;
   thumbnail_url: string;
   formattedPrice: string;
@@ -127,8 +128,8 @@ const Dashboard: React.FC = () => {
         <FoodsContainer>
           <Title>Pratos</Title>
           <FoodList>
-            {foods.map(
-              food =>
+            {foods.map(food =>
+              selectedCategory !== undefined ? (
                 food.category === selectedCategory && (
                   <Food
                     key={food.id}
@@ -148,7 +149,27 @@ const Dashboard: React.FC = () => {
                       <FoodPricing>{food.formattedPrice}</FoodPricing>
                     </FoodContent>
                   </Food>
-                ),
+                )
+              ) : (
+                <Food
+                  key={food.id}
+                  onPress={() => handleNavigate(food.id)}
+                  activeOpacity={0.6}
+                  testID={`food-${food.id}`}
+                >
+                  <FoodImageContainer>
+                    <Image
+                      style={{ width: 88, height: 88 }}
+                      source={{ uri: food.thumbnail_url }}
+                    />
+                  </FoodImageContainer>
+                  <FoodContent>
+                    <FoodTitle>{food.name}</FoodTitle>
+                    <FoodDescription>{food.description}</FoodDescription>
+                    <FoodPricing>{food.formattedPrice}</FoodPricing>
+                  </FoodContent>
+                </Food>
+              ),
             )}
           </FoodList>
         </FoodsContainer>
