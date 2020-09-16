@@ -76,6 +76,7 @@ const FoodDetails: React.FC = () => {
       api.get(`/foods/${routeParams.id}`).then(response => {
         setFood(response.data);
       });
+      setExtras(food.extras);
     }
     loadFood();
   }, [routeParams]);
