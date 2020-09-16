@@ -60,12 +60,23 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     async function loadFoods(): Promise<void> {
-      api.get('foods').then(response => {
-        setFoods(response.data);
+      const response = await api.get<Food[]>('foods', {
+        params: {
+          category_like: selectedCategory,
+          name_like: searchValue,
+        },
       });
+
+      const data = response.data.map(food => ({
+        ...food,
+        formattedPrice: formatValue(food.price),
+      }));
+
+      setFoods(data);
     }
+
     loadFoods();
-  }, [selectedCategory, searchValue]);
+  }, [searchValue, selectedCategory]);
 
   useEffect(() => {
     async function loadCategories(): Promise<void> {
@@ -132,49 +143,26 @@ const Dashboard: React.FC = () => {
         <FoodsContainer>
           <Title>Pratos</Title>
           <FoodList>
-            {foods.map(food =>
-              selectedCategory !== undefined ? (
-                food.category === selectedCategory && (
-                  <Food
-                    key={food.id}
-                    onPress={() => handleNavigate(food.id)}
-                    activeOpacity={0.6}
-                    testID={`food-${food.id}`}
-                  >
-                    <FoodImageContainer>
-                      <Image
-                        style={{ width: 88, height: 88 }}
-                        source={{ uri: food.thumbnail_url }}
-                      />
-                    </FoodImageContainer>
-                    <FoodContent>
-                      <FoodTitle>{food.name}</FoodTitle>
-                      <FoodDescription>{food.description}</FoodDescription>
-                      <FoodPricing>{food.formattedPrice}</FoodPricing>
-                    </FoodContent>
-                  </Food>
-                )
-              ) : (
-                <Food
-                  key={food.id}
-                  onPress={() => handleNavigate(food.id)}
-                  activeOpacity={0.6}
-                  testID={`food-${food.id}`}
-                >
-                  <FoodImageContainer>
-                    <Image
-                      style={{ width: 88, height: 88 }}
-                      source={{ uri: food.thumbnail_url }}
-                    />
-                  </FoodImageContainer>
-                  <FoodContent>
-                    <FoodTitle>{food.name}</FoodTitle>
-                    <FoodDescription>{food.description}</FoodDescription>
-                    <FoodPricing>{food.formattedPrice}</FoodPricing>
-                  </FoodContent>
-                </Food>
-              ),
-            )}
+            {foods.map(food => (
+              <Food
+                key={food.id}
+                onPress={() => handleNavigate(food.id)}
+                activeOpacity={0.6}
+                testID={`food-${food.id}`}
+              >
+                <FoodImageContainer>
+                  <Image
+                    style={{ width: 88, height: 88 }}
+                    source={{ uri: food.thumbnail_url }}
+                  />
+                </FoodImageContainer>
+                <FoodContent>
+                  <FoodTitle>{food.name}</FoodTitle>
+                  <FoodDescription>{food.description}</FoodDescription>
+                  <FoodPricing>{food.formattedPrice}</FoodPricing>
+                </FoodContent>
+              </Food>
+            ))}
           </FoodList>
         </FoodsContainer>
       </ScrollView>
