@@ -95,10 +95,36 @@ const FoodDetails: React.FC = () => {
     loadFood();
   }, [routeParams]);
 
-  function handleIncrementExtra(id: number): void {}
+  function handleIncrementExtra(id: number): void {
+    setExtras(state => {
+      return state.map(extra => {
+        if (extra.id === id) {
+          return {
+            ...extra,
+            quantity: extra.quantity + 1,
+          };
+        }
+
+        return extra;
+      });
+    });
+  }
 
   function handleDecrementExtra(id: number): void {
-    // Decrement extra quantity
+    setExtras(state => {
+      return state.map(extra => {
+        if (extra.id === id && extra.quantity > 0) {
+          return {
+            ...extra,
+            quantity: extra.quantity - 1,
+          };
+        }
+        return {
+          ...extra,
+          quantity: 0,
+        };
+      });
+    });
   }
 
   function handleIncrementFood(): void {
@@ -114,7 +140,15 @@ const FoodDetails: React.FC = () => {
     setFoodQuantity(foodQuantity - 1);
   }
 
-  const toggleFavorite = useCallback(() => {}, [isFavorite, food]);
+  const toggleFavorite = useCallback(async () => {
+    if (!isFavorite) {
+      await api.post('/favorites', food);
+    } else {
+      await api.delete(`/favorites/${food.id}`);
+    }
+
+    setIsFavorite(state => !state);
+  }, [isFavorite, food]);
 
   const cartTotal = useMemo(() => {
     // Calculate cartTotal
