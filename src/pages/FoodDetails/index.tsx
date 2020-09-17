@@ -141,10 +141,10 @@ const FoodDetails: React.FC = () => {
   }
 
   const toggleFavorite = useCallback(async () => {
-    if (!isFavorite) {
-      await api.post('/favorites', food);
-    } else {
+    if (isFavorite) {
       await api.delete(`/favorites/${food.id}`);
+    } else {
+      await api.post('/favorites', food);
     }
 
     setIsFavorite(state => !state);
@@ -160,9 +160,7 @@ const FoodDetails: React.FC = () => {
     return formatValue((extraTotal + foodTotal) * foodQuantity);
   }, [extras, food, foodQuantity]);
 
-  async function handleFinishOrder(): Promise<void> {
-    // Finish the order and save on the API
-  }
+  async function handleFinishOrder(): Promise<void> {}
 
   // Calculate the correct icon name
   const favoriteIconName = useMemo(
